@@ -23,16 +23,6 @@ const DeveloperDashboard = () => {
   //   toast.success(checked ? "You are now available for calls" : "You are now offline");
   // };
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-  
-  useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {

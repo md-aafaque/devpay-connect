@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleJoin = (userType) => {
+    navigate(`/auth?type=${userType}`); // Dynamically pass the user type
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
       <div className="container py-12">
@@ -13,11 +19,21 @@ const Home = () => {
             Connect with expert developers instantly via video call
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button asChild size="lg" variant="default" className="w-full sm:w-auto">
-              <Link to="/Login">Find a Developer</Link>
+            <Button
+              size="lg"
+              variant="default"
+              className="w-full sm:w-auto"
+              onClick={() => handleJoin("client")} // Pass 'client' as userType
+            >
+              Find a Developer
             </Button>
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
-              <Link to="/login">Join as Developer</Link>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => handleJoin("developer")} // Pass 'developer' as userType
+            >
+              Join as Developer
             </Button>
           </div>
         </div>
@@ -41,7 +57,7 @@ const Home = () => {
                 <li>✓ Build your reputation</li>
               </ul>
             </div>
-        </div>
+          </div>
         </div>
       </div>
     </div>

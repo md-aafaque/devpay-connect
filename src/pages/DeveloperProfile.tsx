@@ -46,7 +46,9 @@ const DeveloperProfile = () => {
       setLoading(true);
       let query = supabase
         .from('developers')
-        .select('*');
+        .select('*')
+        .neq('status', 'busy')
+        .neq('status', 'offline');
 
       if (searchQuery) {
         query = query.or(`name.ilike.%${searchQuery}%, skills.cs.{${searchQuery}}`);
@@ -76,6 +78,7 @@ const DeveloperProfile = () => {
       }
 
       if (data) {
+        console.log(data)
         //@ts-ignore
         setDevelopers(data as Developer[]);
       }
@@ -191,7 +194,7 @@ const DeveloperProfile = () => {
                 name={dev.name}
                 hourlyRate={dev.hourly_rate}
                 skills={dev.skills}
-                available={dev.available}
+                available={dev.status}
                 imageUrl={dev.image_url}
               />
             ))
