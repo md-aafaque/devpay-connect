@@ -2,8 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Clock, Code2, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface DeveloperCardProps {
+  id: string;
   name: string;
   title: string;
   rate: number;
@@ -14,6 +16,7 @@ interface DeveloperCardProps {
 }
 
 export const DeveloperCard = ({
+  id,
   name,
   title,
   rate,
@@ -22,6 +25,12 @@ export const DeveloperCard = ({
   available,
   imageUrl,
 }: DeveloperCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/developer/${id}`);
+  };
+
   return (
     <Card className="w-full max-w-sm transition-all duration-300 hover:shadow-lg">
       <CardHeader className="flex flex-row items-center gap-4">
@@ -64,9 +73,10 @@ export const DeveloperCard = ({
         <Button
           className="w-full"
           disabled={!available}
+          onClick={handleClick}
         >
           <Code2 className="mr-2 h-4 w-4" />
-          {available ? "Start Call" : "Currently Unavailable"}
+          {available ? "View Profile" : "Currently Unavailable"}
         </Button>
       </CardFooter>
     </Card>

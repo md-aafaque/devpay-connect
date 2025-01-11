@@ -9,7 +9,140 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          amount: number | null
+          client_id: string | null
+          created_at: string
+          developer_id: string | null
+          end_time: string | null
+          id: string
+          payment_status: string | null
+          start_time: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          client_id?: string | null
+          created_at?: string
+          developer_id?: string | null
+          end_time?: string | null
+          id?: string
+          payment_status?: string | null
+          start_time?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          client_id?: string | null
+          created_at?: string
+          developer_id?: string | null
+          end_time?: string | null
+          id?: string
+          payment_status?: string | null
+          start_time?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_developer_id_fkey"
+            columns: ["developer_id"]
+            isOneToOne: false
+            referencedRelation: "developers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      developers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          hourly_rate: number
+          id: string
+          rating: number | null
+          skills: string[] | null
+          status: Database["public"]["Enums"]["developer_status"] | null
+          title: string | null
+          total_calls: number | null
+          updated_at: string
+          wallet_address: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          hourly_rate?: number
+          id: string
+          rating?: number | null
+          skills?: string[] | null
+          status?: Database["public"]["Enums"]["developer_status"] | null
+          title?: string | null
+          total_calls?: number | null
+          updated_at?: string
+          wallet_address?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          hourly_rate?: number
+          id?: string
+          rating?: number | null
+          skills?: string[] | null
+          status?: Database["public"]["Enums"]["developer_status"] | null
+          title?: string | null
+          total_calls?: number | null
+          updated_at?: string
+          wallet_address?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "developers_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +151,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      developer_status: "available" | "busy" | "offline"
     }
     CompositeTypes: {
       [_ in never]: never
