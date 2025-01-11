@@ -4,137 +4,198 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { DeveloperCard } from "@/components/DeveloperCard";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Search, SlidersHorizontal } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createClient } from "@supabase/supabase-js";
+
+
+interface Developer {
+  id: string;
+  name: string;
+  hourly_rate: number;
+  skills: string[];
+  available: boolean;
+  image_url: string;
+}
 
 const DeveloperProfile = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [developer, setDeveloper] = useState<any>(null);
+  const [developers, setDevelopers] = useState<any>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
-    const fetchDeveloper = async () => {
-      const { data, error } = await supabase
-        .from("developers")
-        .select(`
-          *,
-          profile:profiles(*)
-        `)
-        .eq("id", id)
-        .single();
+    fetchDevelopers();
+  }, []);
+  
+
+  const fetchDevelopers = async () => {
+    try {
+      setLoading(true);
+      let query = supabase
+        .from('developers')
+        .select('*');
+
+      if (searchQuery) {
+        query = query.or(`name.ilike.%${searchQuery}%, skills.cs.{${searchQuery}}`);
+      }
+
+      if (priceRange) {
+        switch (priceRange) {
+          case "low":
+            query = query.lt('hourly_rate', 0.3);
+            break;
+          case "medium":
+            query = query.gte('hourly_rate', 0.3).lt('hourly_rate', 0.6);
+            break;
+          case "high":
+            query = query.gte('hourly_rate', 0.6);
+            break;
+        }
+      }
+
+      const { data, error } = await query;
 
       if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load developer profile",
-          variant: "destructive",
-        });
+        console.error('Error fetching developers:', error);
+        //@ts-ignore
+        toast.error("Error fetching developers: " + error.message);
         return;
       }
 
-      setDeveloper(data);
-    };
-
-    fetchDeveloper();
-  }, [id, toast]);
-
-  const handleBooking = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      navigate("/login");
-      return;
+      if (data) {
+        //@ts-ignore
+        setDevelopers(data as Developer[]);
+      }
+    } catch (error: any) {
+      console.error('Error in fetchDevelopers:', error);
+      //@ts-ignore
+      toast.error("Error fetching developers: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    const { error } = await supabase
-      .from("bookings")
-      .insert({
-        client_id: session.user.id,
-        developer_id: id,
-        amount: developer.hourly_rate,
-      });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create booking",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Success",
-      description: "Booking created successfully",
-    });
-    setIsBookingOpen(false);
   };
 
-  if (!developer) {
-    return <div>Loading...</div>;
-  }
+  const handleSearch = () => {
+    fetchDevelopers();
+  };
+
+  const handlePriceRangeChange = (value: string) => {
+    setPriceRange(value);
+    fetchDevelopers();
+  };
+
+
+  // const handleBooking = async () => {
+  //   const { data: { session } } = await supabase.auth.getSession();
+    
+  //   if (!session) {
+  //     navigate("/login");
+  //     return;
+  //   }
+
+  //   const { error } = await supabase
+  //     .from("bookings")
+  //     .insert({
+  //       client_id: session.user.id,
+  //       developer_id: id,
+  //       amount: developer.hourly_rate,
+  //     });
+
+  //   if (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to create booking",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   toast({
+  //     title: "Success",
+  //     description: "Booking created successfully",
+  //   });
+  //   setIsBookingOpen(false);
+  // };
+
+  // if (!developer) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6">
-          <div className="flex items-center space-x-4">
-            <img
-              src={developer.profile.avatar_url || "https://via.placeholder.com/100"}
-              alt={developer.profile.full_name}
-              className="w-24 h-24 rounded-full object-cover"
-            />
-            <div>
-              <h1 className="text-2xl font-bold">{developer.profile.full_name}</h1>
-              <p className="text-gray-600">{developer.title}</p>
-              <div className="flex items-center mt-2">
-                <span className="text-2xl font-bold">${developer.hourly_rate}</span>
-                <span className="text-gray-600 ml-1">/hour</span>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
+      <div className="container py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4">Available Developers</h1>
+          <p className="text-lg text-muted-foreground">
+            Find and connect with expert developers instantly
+          </p>
+        </div>
+
+        <Card className="p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input 
+                className="pl-9" 
+                placeholder="Search by name or skills..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
-          </div>
+            
+            <Select value={priceRange} onValueChange={handlePriceRangeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Price Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Under 0.3 ETH/hour</SelectItem>
+                <SelectItem value="medium">0.3 - 0.6 ETH/hour</SelectItem>
+                <SelectItem value="high">Over 0.6 ETH/hour</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-2">Skills</h2>
-            <div className="flex flex-wrap gap-2">
-              {developer.skills.map((skill: string) => (
-                <Badge key={skill} variant="secondary">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
+            <Button variant="outline" onClick={handleSearch}>
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
+              Search
+            </Button>
           </div>
-
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-2">About</h2>
-            <p className="text-gray-600">{developer.bio}</p>
-          </div>
-
-          <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-            <DialogTrigger asChild>
-              <Button className="mt-6 w-full">Book a Call</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm Booking</DialogTitle>
-              </DialogHeader>
-              <div className="p-4">
-                <p className="mb-4">
-                  You are about to book a call with {developer.profile.full_name} at ${developer.hourly_rate}/hour
-                </p>
-                <Button onClick={handleBooking} className="w-full">
-                  Confirm Booking
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+        </Card>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading ? (
+            <p className="col-span-full text-center text-lg text-muted-foreground">
+              Loading developers...
+            </p>
+          ) : developers.length === 0 ? (
+            <p className="col-span-full text-center text-lg text-muted-foreground">
+              No developers found matching your criteria.
+            </p>
+          ) : (
+            developers.map((dev) => (
+              <DeveloperCard
+                key={dev.id}
+                name={dev.name}
+                hourlyRate={dev.hourly_rate}
+                skills={dev.skills}
+                available={dev.available}
+                imageUrl={dev.image_url}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

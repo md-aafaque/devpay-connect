@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -70,7 +75,58 @@ const ClientDashboard = () => {
           </div>
         )}
       </div>
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4 flex justify-center">Categories For Booking</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            Full Stack Development
+          </div>
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            BlockChain Services
+          </div>
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            Video Editing
+          </div>
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            Graphic Designing
+          </div>
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            IOT 
+          </div>
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+            All
+          </div>
+        </div>
+
+      </div>
     </div>
+    // <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
+    //   <div className="container py-8">
+    //     <div className="space-y-6">
+    //       {/* Search Section */}
+    //       <Card className="p-6">
+    //         <h2 className="text-2xl font-semibold mb-4">Find a Developer</h2>
+    //         <div className="flex gap-4 flex-wrap">
+    //           <div className="flex-1 min-w-[200px]">
+    //             <Input placeholder="Search by skills..." />
+    //           </div>
+    //           <Button>
+    //             <Search className="mr-2 h-4 w-4" />
+    //             Search
+    //           </Button>
+    //         </div>
+    //       </Card>
+
+    //       {/* Past Consultations */}
+    //       <Card className="p-6">
+    //         <h2 className="text-2xl font-semibold mb-4">Past Consultations</h2>
+    //         <div className="text-muted-foreground">
+    //           No past consultations found
+    //         </div>
+    //       </Card>
+    //     </div>
+    //   </div>
+    // </div>
   );
 };
 

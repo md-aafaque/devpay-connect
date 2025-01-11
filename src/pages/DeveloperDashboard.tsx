@@ -4,13 +4,34 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
 
 const DeveloperDashboard = () => {
   const navigate = useNavigate();
+  
   const { toast } = useToast();
   const [isAvailable, setIsAvailable] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  // const [isAvailable, setIsAvailable] = useState(false);
+  const [hourlyRate, setHourlyRate] = useState("0.5");
+  
+  // const handleAvailabilityChange = (checked: boolean) => {
+  //   setIsAvailable(checked);
+  //   toast.success(checked ? "You are now available for calls" : "You are now offline");
+  // };
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate("/");
+      }
+    });
 
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+  
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -65,34 +86,69 @@ const DeveloperDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Developer Dashboard</h1>
-      
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Availability</h2>
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={isAvailable}
-              onCheckedChange={handleAvailabilityChange}
-            />
-            <span>{isAvailable ? "Available" : "Offline"}</span>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
+    <div className="container py-8">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Profile Section */}
+        <Card className="md:col-span-4 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold">Profile</h2>
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="available" 
+                checked={isAvailable}
+                onCheckedChange={handleAvailabilityChange}
+              />
+              <Label htmlFor="available">Available</Label>
+            </div>
           </div>
-        </div>
-      </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="hourlyRate">Hourly Rate (ETH)</Label>
+              <Input
+                id="hourlyRate"
+                type="number"
+                value={hourlyRate}
+                onChange={(e) => setHourlyRate(e.target.value)}
+                min="0"
+                step="0.1"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="skills">Skills</Label>
+              <Input
+                id="skills"
+                placeholder="React, Node.js, Solidity..."
+              />
+            </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Upcoming Calls</h2>
-          {/* Add upcoming calls list here */}
-        </div>
-        
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Earnings</h2>
-          {/* Add earnings information here */}
+            <Button className="w-full">Update Profile</Button>
+          </div>
+        </Card>
+
+        {/* Main Content */}
+        <div className="md:col-span-8 space-y-6">
+          {/* New Bookings */}
+          <Card className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">New Bookings</h2>
+            <div className="space-y-4">
+              <div className="text-muted-foreground">No new booking requests</div>
+            </div>
+          </Card>
+
+          {/* Past Work */}
+          <Card className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">Past Work</h2>
+            <div className="space-y-4">
+              <div className="text-muted-foreground">No past work history</div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
