@@ -84,9 +84,14 @@ const CallRoom = () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return;
 
-        // Get AppID and ServerSecret from environment variables
-        const appID = 1022760751;  // Replace with your actual AppID
-        const serverSecret = "32c65b8d77e1c9f10b8e7fa1d6231cad"; // Replace with your actual ServerSecret
+        // Only initialize if the call is accepted or if the user is the client
+        if (callData.status !== 'accepted' && session.user.id !== callData.client_id) {
+          console.log("Waiting for call to be accepted...");
+          return;
+        }
+
+        const appID = 1550732241;
+        const serverSecret = "c544f0f886d4a80dbbf76f3a5e2b8c27";
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
@@ -104,11 +109,13 @@ const CallRoom = () => {
         const zc = ZegoUIKitPrebuilt.create(kitToken);
         zegoInitialized.current = true;
 
-        // Update call status when joining
-        await supabase
-          .from('call_requests')
-          .update({ status: 'accepted', start_time: new Date().toISOString() })
-          .eq('id', callId);
+        // Only update start time if this is the first time joining
+        if (!callData.start_time) {
+          await supabase
+            .from('call_requests')
+            .update({ start_time: new Date().toISOString() })
+            .eq('id', callId);
+        }
 
         zc.joinRoom({
           container: document.querySelector("#call-container") as HTMLElement,
