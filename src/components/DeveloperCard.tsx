@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,11 +17,22 @@ interface DeveloperCardProps {
   imageUrl: string;
 }
 
-export function DeveloperCard({ id, name, hourlyRate, skills, available, imageUrl }: DeveloperCardProps) {
+export function DeveloperCard({ id, hourlyRate, skills, available, }: DeveloperCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
   const navigate = useNavigate();
-
+  const [name,setName] = useState('');
+  const [image_url, setImage_Url] = useState('');
+  
+  useEffect(() => {
+    const getDetails = async() => {
+      await supabase
+        .from("profiles")
+        .select('display_name, avatar_url')
+        .eq('id',id)
+    }
+    getDetails()
+  })
   const handleCallRequest = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -60,7 +71,7 @@ export function DeveloperCard({ id, name, hourlyRate, skills, available, imageUr
         <div className="flex items-center space-x-4">
           <div className="relative">
             <img
-              src={imageUrl}
+              src={image_url}
               alt={name}
               className="w-16 h-16 rounded-full object-cover"
             />

@@ -40,6 +40,15 @@ const DeveloperProfile = () => {
   useEffect(() => {
     fetchDevelopers();
   }, []);
+
+  // const getDevName = async (id) => {
+  //   const name = await supabase
+  //   .from('profiles')
+  //   .select('display_name')
+  //   .eq('id',id)
+
+  //   return name;
+  // }
   
   const fetchDevelopers = async () => {
     try {
@@ -92,6 +101,7 @@ const DeveloperProfile = () => {
 
       if (data) {
         console.log(data);
+        
         setDevelopers(data as Developer[]);
       }
     } catch (error: any) {
@@ -166,7 +176,8 @@ const DeveloperProfile = () => {
               No developers found matching your criteria.
             </p>
           ) : (
-            developers?.map((dev: any) => (
+            developers?.map((dev: any) => 
+              (
               <DeveloperCard
                 key={dev.id}
                 id={dev.id}

@@ -211,7 +211,12 @@ const Payment = () => {
           title: "Payment Successful",
           description: `Successfully sent ${totalAmount} ETH to the developer.`,
         });
-        navigate('client-dashboard')
+        await supabase
+            .from("call_requests")
+            //@ts-ignore
+            .update({amount_status : true })
+            .eq("id",callIdFromSearch)
+        navigate('/client-dashboard')
       } else {
         throw new Error("Transaction failed");
       }

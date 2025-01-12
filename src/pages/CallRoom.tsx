@@ -91,8 +91,8 @@ const CallRoom = () => {
           return;
         }
 
-        const appID = 1022760751;
-        const serverSecret = "32c65b8d77e1c9f10b8e7fa1d6231cad";
+        const appID = Number(process.env.NEXT_PUBLIC_APP_ID);
+        const serverSecret = process.env.NEXT_PUBLIC_SERVER_SECRET;
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
@@ -134,22 +134,29 @@ const CallRoom = () => {
             // Update call status when leaving
             const currentTime = new Date();
             const { data } = await supabase
-              .from('call_requests')
-              .select('start_time')
-              .eq('id', callId)
-            console.log(data)
+            .from('call_requests')
+            .select('start_time, developer_id')
+            .eq('id', callId)
+            .single();
+
+            const hourlyRate = await supabase
+            .from('developers')
+            .select('hourly_rate')
+            .eq('id', data.developer_id)
 
             const startTime = new Date(data[0].start_time); // Convert start_time to a Date object
             //@ts-ignore
             const timeWorkedMilliseconds = currentTime - startTime; // Subtract to get time worked in milliseconds
             const timeWorkedHours = (timeWorkedMilliseconds / (1000 * 60 * 60)).toFixed(2); // Convert to hours and round to 2 decimal places
+            const amt = (Number(timeWorkedHours) * Number(hourlyRate))
 
             await supabase
               .from('call_requests')
               .update({
                 status: 'completed',
                 end_time: new Date().toISOString(),
-                duration: Number(timeWorkedHours)
+                duration: Number(timeWorkedHours),
+                amount : Number(amt)
               })
               .eq('id', callId);
               if(localStorage.getItem("role") == 'client') navigate(`/payment?callId=${callId}`)

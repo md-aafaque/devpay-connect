@@ -13,7 +13,7 @@ const Home = () => {
       <div className="container py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-            Instant Developer Consultations
+            DevPay Connect
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
             Connect with expert developers instantly via video call

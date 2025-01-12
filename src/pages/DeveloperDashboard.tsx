@@ -80,7 +80,7 @@ const DeveloperDashboard = () => {
           *,
           developer:developers(*)
         `)
-        .eq("client_id", session.user.id)
+        .eq("developer_id", session.user.id)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -91,9 +91,9 @@ const DeveloperDashboard = () => {
         });
         return;
       }
-
+      console.log(data)
       setBookings(data || []);
-
+      console.log(bookings)
       setName(developerProfileData.full_name);
       setHourlyRate(developerData.hourly_rate);
       setIsAvailable(developerData.status === "available");
@@ -516,14 +516,14 @@ const DeveloperDashboard = () => {
                       className="border rounded-lg p-4 flex justify-between items-center"
                     >
                       <div>
-                        <h3 className="font-semibold">{booking.developer.title}</h3>
+                        <h3 className="font-semibold">{booking.task_description}</h3>
                         <p className="text-sm text-gray-500">
                           {new Date(booking.start_time).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">${booking.amount}</p>
-                        <p className="text-sm text-gray-500">{booking.status}</p>
+                        <p className="text-sm text-gray-500">{booking.amount_status ? "Recieved" : "Pending"}</p>
                       </div>
                     </div>
                   ))}
