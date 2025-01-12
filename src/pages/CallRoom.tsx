@@ -84,16 +84,9 @@ const CallRoom = () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return;
 
-        const { data: secrets, error: secretsError } = await supabase
-          .from('secrets')
-          .select('*')
-          .in('name', ['AppID', 'ServerSecret'])
-          .limit(2);
-
-        if (secretsError) throw secretsError;
-
-        const appID = parseInt(secrets.find(s => s.name === 'AppID')?.value || '0');
-        const serverSecret = secrets.find(s => s.name === 'ServerSecret')?.value;
+        // Get AppID and ServerSecret from environment variables
+        const appID = 1550732241;  // Replace with your actual AppID
+        const serverSecret = "c544f0f886d4a80dbbf76f3a5e2b8c27"; // Replace with your actual ServerSecret
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
@@ -124,7 +117,12 @@ const CallRoom = () => {
             mode: ZegoUIKitPrebuilt.OneONoneCall,
           },
           showScreenSharingButton: true,
-          onLeave: async () => {
+          turnOnMicrophoneWhenJoining: true,
+          turnOnCameraWhenJoining: true,
+          showMyCameraToggleButton: true,
+          showMyMicrophoneToggleButton: true,
+          showAudioVideoSettingsButton: true,
+          onLeaveRoom: async () => {
             // Update call status when leaving
             await supabase
               .from('call_requests')
