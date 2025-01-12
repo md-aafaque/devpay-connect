@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { createClient } from "@supabase/supabase-js";
 
-
 interface Developer {
   id: string;
   name: string;
@@ -35,15 +34,13 @@ const DeveloperProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState<string>("");
   const [loading, setLoading] = useState(true);
-    const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const category = searchParams.get("role");
-  console.log(category)
   
   useEffect(() => {
     fetchDevelopers();
   }, []);
   
-
   const fetchDevelopers = async () => {
     try {
       setLoading(true);
@@ -85,20 +82,25 @@ const DeveloperProfile = () => {
 
       if (error) {
         console.error('Error fetching developers:', error);
-        //@ts-ignore
-        toast.error("Error fetching developers: " + error.message);
+        toast({
+          title: "Error",
+          description: "Error fetching developers: " + error.message,
+          variant: "destructive",
+        });
         return;
       }
 
       if (data) {
-        console.log(data)
-        //@ts-ignore
+        console.log(data);
         setDevelopers(data as Developer[]);
       }
     } catch (error: any) {
       console.error('Error in fetchDevelopers:', error);
-      //@ts-ignore
-      toast.error("Error fetching developers: " + error.message);
+      toast({
+        title: "Error",
+        description: "Error fetching developers: " + error.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -112,43 +114,6 @@ const DeveloperProfile = () => {
     setPriceRange(value);
     fetchDevelopers();
   };
-
-
-  // const handleBooking = async () => {
-  //   const { data: { session } } = await supabase.auth.getSession();
-    
-  //   if (!session) {
-  //     navigate("/login");
-  //     return;
-  //   }
-
-  //   const { error } = await supabase
-  //     .from("bookings")
-  //     .insert({
-  //       client_id: session.user.id,
-  //       developer_id: id,
-  //       amount: developer.hourly_rate,
-  //     });
-
-  //   if (error) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to create booking",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   toast({
-  //     title: "Success",
-  //     description: "Booking created successfully",
-  //   });
-  //   setIsBookingOpen(false);
-  // };
-
-  // if (!developer) {
-  //   return <div>Loading...</div>;
-  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
@@ -196,18 +161,19 @@ const DeveloperProfile = () => {
             <p className="col-span-full text-center text-lg text-muted-foreground">
               Loading developers...
             </p>
-          ) : developers.length === 0 ? (
+          ) : developers?.length === 0 ? (
             <p className="col-span-full text-center text-lg text-muted-foreground">
               No developers found matching your criteria.
             </p>
           ) : (
-            developers.map((dev) => (
+            developers?.map((dev: any) => (
               <DeveloperCard
                 key={dev.id}
+                id={dev.id}
                 name={dev.name}
                 hourlyRate={dev.hourly_rate}
                 skills={dev.skills}
-                available={dev.status}
+                available={dev.status === "available"}
                 imageUrl={dev.image_url}
               />
             ))
