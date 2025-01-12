@@ -206,7 +206,7 @@ const DeveloperDashboard = () => {
         title: "Wallet Connected",
         description: "Your MetaMask wallet has been connected successfully.",
       });
-      navigate("/client-dashboard");
+      window.location.reload();
     } catch (error: any) {
       console.error("Wallet connection error:", error);
       toast({

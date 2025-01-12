@@ -130,7 +130,7 @@ const Authform = () => {
   }, [navigate, role]);
 
   // Redirect URL for authentication
-  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
+  const redirectUrl = import.meta.env.VITE_REDIRECT_URL;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

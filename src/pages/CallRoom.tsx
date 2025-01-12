@@ -91,8 +91,8 @@ const CallRoom = () => {
           return;
         }
 
-        const appID = Number(process.env.NEXT_PUBLIC_APP_ID);
-        const serverSecret = process.env.NEXT_PUBLIC_SERVER_SECRET;
+        const appID = Number(import.meta.env.VITE_APP_ID);
+        const serverSecret = import.meta.env.VITE_SERVER_SECRET;
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
@@ -106,7 +106,7 @@ const CallRoom = () => {
           session.user.id,
           session.user.email as string
         );
-
+        console.log(kitToken)
         const zc = ZegoUIKitPrebuilt.create(kitToken);
         zegoInitialized.current = true;
 
@@ -118,6 +118,7 @@ const CallRoom = () => {
             .eq('id', callId);
         }
 
+        console.log("BeforeCallLeave")
         zc.joinRoom({
           container: document.querySelector("#call-container") as HTMLElement,
           sharedLinks: [],
@@ -131,24 +132,29 @@ const CallRoom = () => {
           showMyMicrophoneToggleButton: true,
           showAudioVideoSettingsButton: true,
           onLeaveRoom: async () => {
+            console.log("Helllo1")
             // Update call status when leaving
             const currentTime = new Date();
             const { data } = await supabase
-            .from('call_requests')
-            .select('start_time, developer_id')
-            .eq('id', callId)
-            .single();
+              .from('call_requests')
+              .select('start_time, developer_id')
+              .eq('id', callId)
+              .single();
 
-            const hourlyRate = await supabase
+            const datahour = await supabase
             .from('developers')
             .select('hourly_rate')
             .eq('id', data.developer_id)
+            console.log(datahour)
+            const hourlyRate = (datahour.data[0]).hourly_rate
 
-            const startTime = new Date(data[0].start_time); // Convert start_time to a Date object
+            const startTime = new Date(data.start_time); // Convert start_time to a Date object
             //@ts-ignore
             const timeWorkedMilliseconds = currentTime - startTime; // Subtract to get time worked in milliseconds
             const timeWorkedHours = (timeWorkedMilliseconds / (1000 * 60 * 60)).toFixed(2); // Convert to hours and round to 2 decimal places
+            console.log(timeWorkedHours)
             const amt = (Number(timeWorkedHours) * Number(hourlyRate))
+            console.log(amt)
 
             await supabase
               .from('call_requests')
@@ -159,6 +165,7 @@ const CallRoom = () => {
                 amount : Number(amt)
               })
               .eq('id', callId);
+              console.log("Helllo")
               if(localStorage.getItem("role") == 'client') navigate(`/payment?callId=${callId}`)
               else navigate('/developer-dashboard')
           }

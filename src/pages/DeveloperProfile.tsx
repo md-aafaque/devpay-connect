@@ -181,11 +181,10 @@ const DeveloperProfile = () => {
               <DeveloperCard
                 key={dev.id}
                 id={dev.id}
-                name={dev.name}
                 hourlyRate={dev.hourly_rate}
                 skills={dev.skills}
                 available={dev.status === "available"}
-                imageUrl={dev.image_url}
+                // imageUrl={dev.image_url}
               />
             ))
           )}

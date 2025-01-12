@@ -10,33 +10,47 @@ import { toast } from "sonner";
 
 interface DeveloperCardProps {
   id: string;
-  name: string;
   hourlyRate: number;
   skills: string[];
   available: boolean;
-  imageUrl: string;
 }
 
-export function DeveloperCard({ id, hourlyRate, skills, available, }: DeveloperCardProps) {
+export function DeveloperCard({ id, hourlyRate, skills, available }: DeveloperCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
-  const navigate = useNavigate();
-  const [name,setName] = useState('');
+  const [name, setName] = useState('');
   const [image_url, setImage_Url] = useState('');
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const getDetails = async() => {
-      await supabase
-        .from("profiles")
-        .select('display_name, avatar_url')
-        .eq('id',id)
-    }
-    getDetails()
-  })
+    const getDetails = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select('full_name, avatar_url')
+          .eq('id', id)
+          .single(); // Use .single() to get one record
+
+        if (error) {
+          console.error("Error fetching data:", error);
+          return;
+        }
+
+        // Set the fetched data
+        setName(data?.full_name || '');
+        setImage_Url(data?.avatar_url || '');
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    getDetails();
+  }, [id]); // Run the effect when the `id` prop changes
+
   const handleCallRequest = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         toast.error("Please login to start a call");
         navigate("/login");
