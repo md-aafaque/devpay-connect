@@ -85,8 +85,8 @@ const CallRoom = () => {
         if (!session) return;
 
         // Get AppID and ServerSecret from environment variables
-        const appID = 1550732241;  // Replace with your actual AppID
-        const serverSecret = "c544f0f886d4a80dbbf76f3a5e2b8c27"; // Replace with your actual ServerSecret
+        const appID = 1022760751;  // Replace with your actual AppID
+        const serverSecret = "32c65b8d77e1c9f10b8e7fa1d6231cad"; // Replace with your actual ServerSecret
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
