@@ -49,7 +49,6 @@ export const DeveloperGrid = () => {
       <h2 className="mb-8 text-center text-3xl font-bold">Featured Developers</h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {loading ? (
-          // Loading skeletons
           [...Array(4)].map((_, index) => (
             <div key={index} className="space-y-4 p-6">
               <Skeleton className="h-16 w-16 rounded-full" />
@@ -68,10 +67,8 @@ export const DeveloperGrid = () => {
               key={dev.id}
               id={dev.id}
               name={dev.profile.full_name}
-              title={dev.title}
-              rate={dev.hourly_rate}
-              rating={dev.rating}
-              skills={dev.skills}
+              hourlyRate={dev.hourly_rate}
+              skills={dev.skills || []}
               available={dev.status === "available"}
               imageUrl={dev.profile.avatar_url || "https://via.placeholder.com/150"}
             />

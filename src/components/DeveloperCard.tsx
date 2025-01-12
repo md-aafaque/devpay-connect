@@ -9,14 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface DeveloperCardProps {
+  id: string;
   name: string;
   hourlyRate: number;
   skills: string[];
-  available: string;
+  available: boolean;
   imageUrl: string;
 }
 
-export function DeveloperCard({ name, hourlyRate, skills, available, imageUrl }: DeveloperCardProps) {
+export function DeveloperCard({ id, name, hourlyRate, skills, available, imageUrl }: DeveloperCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ export function DeveloperCard({ name, hourlyRate, skills, available, imageUrl }:
               alt={name}
               className="w-16 h-16 rounded-full object-cover"
             />
-            <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${available == 'available' ? 'bg-green-500 animate-pulse-status' : 'bg-gray-400'}`} />
+            <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${available ? 'bg-green-500 animate-pulse-status' : 'bg-gray-400'}`} />
           </div>
           <div>
             <h3 className="text-lg font-semibold">{name}</h3>
@@ -82,9 +83,9 @@ export function DeveloperCard({ name, hourlyRate, skills, available, imageUrl }:
         <Button
           className="w-full mt-4 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
           onClick={() => setIsDialogOpen(true)}
-          disabled={available !== 'available'}
+          disabled={!available}
         >
-          {available === 'available' ? "Call Now" : "Unavailable"}
+          {available ? "Call Now" : "Unavailable"}
         </Button>
       </Card>
 

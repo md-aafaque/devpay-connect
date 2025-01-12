@@ -63,6 +63,63 @@ export type Database = {
           },
         ]
       }
+      call_requests: {
+        Row: {
+          amount: number | null
+          client_id: string
+          created_at: string | null
+          developer_id: string
+          duration: number | null
+          end_time: string | null
+          id: string
+          start_time: string | null
+          status: Database["public"]["Enums"]["call_request_status"] | null
+          task_description: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number | null
+          client_id: string
+          created_at?: string | null
+          developer_id: string
+          duration?: number | null
+          end_time?: string | null
+          id?: string
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["call_request_status"] | null
+          task_description: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number | null
+          client_id?: string
+          created_at?: string | null
+          developer_id?: string
+          duration?: number | null
+          end_time?: string | null
+          id?: string
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["call_request_status"] | null
+          task_description?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_requests_developer_id_fkey"
+            columns: ["developer_id"]
+            isOneToOne: false
+            referencedRelation: "developers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       developers: {
         Row: {
           bio: string | null
@@ -151,6 +208,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      call_request_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "completed"
+        | "cancelled"
       developer_status: "available" | "busy" | "offline"
     }
     CompositeTypes: {
