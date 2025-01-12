@@ -6,6 +6,7 @@ import DeveloperProfile from "@/pages/DeveloperProfile";
 import Authform from "@/pages/Authform";
 import CallRoom from "@/pages/CallRoom";
 import { Toaster } from "sonner";
+import Payment from "./pages/payment";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/developer-dashboard" element={<DeveloperDashboard />} />
         <Route path="/developers" element={<DeveloperProfile />} />
         <Route path="/call-room/:callId" element={<CallRoom />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
       <Toaster richColors />
     </Router>

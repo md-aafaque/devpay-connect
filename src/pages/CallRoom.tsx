@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ const CallRoom = () => {
   const [callData, setCallData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const zegoInitialized = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCallData = async () => {
@@ -90,8 +91,8 @@ const CallRoom = () => {
           return;
         }
 
-        const appID = 1550732241;
-        const serverSecret = "c544f0f886d4a80dbbf76f3a5e2b8c27";
+        const appID = 1022760751;
+        const serverSecret = "32c65b8d77e1c9f10b8e7fa1d6231cad";
 
         if (!appID || !serverSecret) {
           toast.error("Missing ZegoCloud configuration");
@@ -131,13 +132,28 @@ const CallRoom = () => {
           showAudioVideoSettingsButton: true,
           onLeaveRoom: async () => {
             // Update call status when leaving
+            const currentTime = new Date();
+            const { data } = await supabase
+              .from('call_requests')
+              .select('start_time')
+              .eq('id', callId)
+            console.log(data)
+
+            const startTime = new Date(data[0].start_time); // Convert start_time to a Date object
+            //@ts-ignore
+            const timeWorkedMilliseconds = currentTime - startTime; // Subtract to get time worked in milliseconds
+            const timeWorkedHours = (timeWorkedMilliseconds / (1000 * 60 * 60)).toFixed(2); // Convert to hours and round to 2 decimal places
+
             await supabase
               .from('call_requests')
               .update({
                 status: 'completed',
-                end_time: new Date().toISOString()
+                end_time: new Date().toISOString(),
+                duration: Number(timeWorkedHours)
               })
               .eq('id', callId);
+              if(localStorage.getItem("role") == 'client') navigate(`/payment?callId=${callId}`)
+              else navigate('/developer-dashboard')
           }
         });
       } catch (error) {
