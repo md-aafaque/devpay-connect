@@ -3,10 +3,13 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+// Define environment variable for development mode
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Vite configuration
+export default defineConfig({
   build: {
-    outDir: "dist", // Ensure the output directory is set to `dist`
+    outDir: "dist",
   },
   server: {
     host: "::",
@@ -14,12 +17,11 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    isDevelopment && componentTagger(), // Include loggable-tagger only in development
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-}));
+});
