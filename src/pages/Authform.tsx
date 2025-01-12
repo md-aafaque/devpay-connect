@@ -118,7 +118,7 @@ const Authform = () => {
             }
 
           // Redirect to dashboard
-          navigate(`/dashboard/${role}`);
+          navigate(`/${role}-dashboard`);
         }
       }
     );

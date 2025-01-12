@@ -12,7 +12,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Authform />} />
+        <Route path="/auth" element={<Authform />} />
         <Route path="/client-dashboard" element={<ClientDashboard />} />
         <Route path="/developer-dashboard" element={<DeveloperDashboard />} />
         <Route path="/developers" element={<DeveloperProfile />} />
