@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ const CallRoom = () => {
   const { callId } = useParams();
   const [callData, setCallData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const zegoInitialized = useRef(false);
 
   useEffect(() => {
     const fetchCallData = async () => {
@@ -18,6 +19,7 @@ const CallRoom = () => {
           return;
         }
 
+        // Fetch initial call data
         const { data: callRequest, error } = await supabase
           .from('call_requests')
           .select(`
@@ -35,6 +37,34 @@ const CallRoom = () => {
         }
 
         setCallData(callRequest);
+        console.log("Call data fetched:", callRequest);
+
+        // Subscribe to real-time updates for this call request
+        const channel = supabase
+          .channel(`call_request_${callId}`)
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'call_requests',
+              filter: `id=eq.${callId}`
+            },
+            (payload) => {
+              console.log("Real-time update received:", payload);
+              if (payload.new) {
+                setCallData((prevData: any) => ({
+                  ...prevData,
+                  ...payload.new
+                }));
+              }
+            }
+          )
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(channel);
+        };
       } catch (error) {
         console.error('Error:', error);
         toast.error("Failed to fetch call data");
@@ -48,32 +78,67 @@ const CallRoom = () => {
 
   useEffect(() => {
     const initializeCall = async () => {
-      if (!callData) return;
+      if (!callData || zegoInitialized.current) return;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
 
-      const appID = 1234567890; // Replace with your ZegoCloud App ID
-      const serverSecret = "your-server-secret"; // Replace with your ZegoCloud Server Secret
+        const { data: secrets, error: secretsError } = await supabase
+          .from('secrets')
+          .select('*')
+          .in('name', ['AppID', 'ServerSecret'])
+          .limit(2);
 
-      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-        appID,
-        serverSecret,
-        callId as string,
-        session.user.id,
-        session.user.email as string
-      );
+        if (secretsError) throw secretsError;
 
-      const zc = ZegoUIKitPrebuilt.create(kitToken);
+        const appID = parseInt(secrets.find(s => s.name === 'AppID')?.value || '0');
+        const serverSecret = secrets.find(s => s.name === 'ServerSecret')?.value;
 
-      zc.joinRoom({
-        container: document.querySelector("#call-container") as HTMLElement,
-        sharedLinks: [],
-        scenario: {
-          mode: ZegoUIKitPrebuilt.OneONoneCall,
-        },
-        showScreenSharingButton: true,
-      });
+        if (!appID || !serverSecret) {
+          toast.error("Missing ZegoCloud configuration");
+          return;
+        }
+
+        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+          appID,
+          serverSecret,
+          callId as string,
+          session.user.id,
+          session.user.email as string
+        );
+
+        const zc = ZegoUIKitPrebuilt.create(kitToken);
+        zegoInitialized.current = true;
+
+        // Update call status when joining
+        await supabase
+          .from('call_requests')
+          .update({ status: 'accepted', start_time: new Date().toISOString() })
+          .eq('id', callId);
+
+        zc.joinRoom({
+          container: document.querySelector("#call-container") as HTMLElement,
+          sharedLinks: [],
+          scenario: {
+            mode: ZegoUIKitPrebuilt.OneONoneCall,
+          },
+          showScreenSharingButton: true,
+          onLeave: async () => {
+            // Update call status when leaving
+            await supabase
+              .from('call_requests')
+              .update({
+                status: 'completed',
+                end_time: new Date().toISOString()
+              })
+              .eq('id', callId);
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing call:', error);
+        toast.error("Failed to initialize call");
+      }
     };
 
     initializeCall();
@@ -94,7 +159,7 @@ const CallRoom = () => {
           <h1 className="text-2xl font-bold">Call Room</h1>
           {callData && (
             <p className="text-muted-foreground">
-              Call with {callData.client.full_name} and {callData.developer.title}
+              Call with {callData.client?.full_name} and {callData.developer?.title}
             </p>
           )}
         </div>
