@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -35,6 +35,9 @@ const DeveloperProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState<string>("");
   const [loading, setLoading] = useState(true);
+    const [searchParams] = useSearchParams();
+  const category = searchParams.get("role");
+  console.log(category)
   
   useEffect(() => {
     fetchDevelopers();
@@ -44,12 +47,22 @@ const DeveloperProfile = () => {
   const fetchDevelopers = async () => {
     try {
       setLoading(true);
-      let query = supabase
+      let query;
+      if(!category){
+        query = supabase
         .from('developers')
         .select('*')
         .neq('status', 'busy')
         .neq('status', 'offline');
-
+      }
+      else{
+      query = supabase
+        .from('developers')
+        .select('*')
+        .eq('title',category)
+        .neq('status', 'busy')
+        .neq('status', 'offline');
+      }
       if (searchQuery) {
         query = query.or(`name.ilike.%${searchQuery}%, skills.cs.{${searchQuery}}`);
       }

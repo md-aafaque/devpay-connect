@@ -78,23 +78,29 @@ const ClientDashboard = () => {
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4 flex justify-center">Categories For Booking</h2>
         <div className="grid grid-cols-3 gap-4">
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{ navigate('/developers/?role=Full Stack Developer') }}>
             Full Stack Development
           </div>
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
-            BlockChain Services
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{navigate('/developers/?role=Frontend Developer')}}>
+            Frontend Developer
           </div>
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
-            Video Editing
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{navigate('/developers/?role=Backend Developer')}}>
+            Backend Developer
           </div>
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
-            Graphic Designing
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{navigate('/developers/?role=Machine Learning Engineer')}}>
+            Machine Learning Engineer
           </div>
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
-            IOT 
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{navigate('/developers/?role=Blockchain Engineer')}}>
+            Blockchain Engineer
           </div>
-          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center">
-            All
+          <div className="h-20 text-white text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-500 border border-gray-300 rounded-xl flex items-center justify-center"
+          onClick={()=>{navigate('/developers/')}}>
+            Explore All
           </div>
         </div>
 

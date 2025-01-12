@@ -14,9 +14,9 @@ const DeveloperDashboard = () => {
   const { toast } = useToast();
   const [isAvailable, setIsAvailable] = useState(false);
   const [profile, setProfile] = useState<any>(null);
-  // const [isAvailable, setIsAvailable] = useState(false);
-  const [hourlyRate, setHourlyRate] = useState("0.5");
-
+  const [hourlyRate, setHourlyRate] = useState(Number);
+  const [name, setName] = useState("");
+  const [skills, setSkills] = useState([]);
   // const handleAvailabilityChange = (checked: boolean) => {
   //   setIsAvailable(checked);
   //   toast.success(checked ? "You are now available for calls" : "You are now offline");
@@ -30,13 +30,25 @@ const DeveloperDashboard = () => {
         navigate("/login");
         return;
       }
+      console.log(session.user.id)
 
       const { data: developerData, error } = await supabase
         .from("developers")
         .select("*")
         .eq("id", session.user.id)
         .single();
+      console.log(developerData)
 
+      const { data: developerProfileData} = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      setName(developerProfileData.full_name)
+      setHourlyRate(developerData.hourly_rate)
+      setIsAvailable(developerData.status === "available")
+      setSkills(developerData.skills)
       if (error || !developerData) {
         toast({
           title: "Error",
@@ -47,7 +59,6 @@ const DeveloperDashboard = () => {
       }
 
       setProfile(developerData);
-      setIsAvailable(developerData.status === "available");
     };
 
     checkAuth();
@@ -95,13 +106,21 @@ const DeveloperDashboard = () => {
             </div>
 
             <div className="space-y-4">
+            <div>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
               <div>
                 <Label htmlFor="hourlyRate">Hourly Rate (ETH)</Label>
                 <Input
                   id="hourlyRate"
                   type="number"
                   value={hourlyRate}
-                  onChange={(e) => setHourlyRate(e.target.value)}
+                  onChange={(e) => setHourlyRate(Number(e.target.value))}
                   min="0"
                   step="0.1"
                 />

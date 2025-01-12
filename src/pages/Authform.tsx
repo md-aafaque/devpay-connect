@@ -78,10 +78,46 @@ const Authform = () => {
                 console.log("Data inserted successfully:", data);
               }
             }
-          }
+          }else{
+              console.log("User is a client. Checking if already exists...");
+  
+              // Check if the user already exists in the developers table
+              const { data: existingClient, error: clientError } = await supabase
+                .from("profiles")
+                .select("id")
+                .eq("id", user.id)
+                .single();
+  
+              if (clientError && clientError.code !== "PGRST116") {
+                console.error("Error checking client:", clientError);
+                return;
+              }
+  
+              console.log("Existing Client Data:", existingClient);
+  
+              if (!existingClient) {
+                console.log("User is new. Adding to client table...");
+                console.log(user.id);
+  
+                const { data, error } = await supabase.from("profiles").insert([
+                  {
+                    id: user.id, // Replace with the actual user id
+                    full_name: user.user_metadata.full_name, // Replace with the actual full name
+                    email: user.email, // Replace with the actual email
+                    avatar_url: user.user_metadata.avatar_url, // Replace with the actual avatar URL
+                    created_at: user.created_at, // Replace with the actual created_at timestamp
+                    updated_at: user.updated_at, // Replace with the actual updated_at timestamp
+                  },
+                ]);
+                if (error) {
+                  console.error("Error inserting data:", error);
+                } else {
+                  console.log("Data inserted successfully:", data);
+                }
+              }
+            }
 
           // Redirect to dashboard
-          console.log("Redirecting to:", `/dashboard/${role}`);
           navigate(`/dashboard/${role}`);
         }
       }
