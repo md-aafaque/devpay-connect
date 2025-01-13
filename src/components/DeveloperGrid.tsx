@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
-import DeveloperCard from "./DeveloperCard";
+import { DeveloperCard } from "./DeveloperCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Developer {
-  id: string;
-  hourly_rate: number;
-  skills: string[];
-  status: "available" | "busy" | "offline";
-}
-
-const DeveloperGrid = () => {
-  const [developers, setDevelopers] = useState<Developer[]>([]);
+export const DeveloperGrid = () => {
+  const [developers, setDevelopers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchDevelopers = async () => {
@@ -20,60 +15,64 @@ const DeveloperGrid = () => {
         const { data, error } = await supabase
           .from("developers")
           .select(`
-            id,
-            hourly_rate,
-            skills,
-            status
-          `);
+            *,
+            profile:profiles(*)
+          `)
+          .order("rating", { ascending: false });
 
         if (error) {
-          throw error;
+          toast({
+            title: "Error",
+            description: "Failed to load developers",
+            variant: "destructive",
+          });
+          return;
         }
 
         setDevelopers(data || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch developers");
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchDevelopers();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <p>Loading developers...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
+  }, [toast]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {developers.length === 0 ? (
-        <p>No developers found.</p>
-      ) : (
-        developers.map((dev) => (
-          <DeveloperCard
-            key={dev.id}
-            id={dev.id}
-            hourlyRate={dev.hourly_rate}
-            skills={dev.skills || []}
-            available={dev.status === "available"}
-          />
-        ))
-      )}
+    <div className="container py-12">
+      <h2 className="mb-8 text-center text-3xl font-bold">Featured Developers</h2>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {loading ? (
+          [...Array(4)].map((_, index) => (
+            <div key={index} className="space-y-4 p-6">
+              <Skeleton className="h-16 w-16 rounded-full" />
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ))
+        ) : developers.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500">
+            No developers available at the moment
+          </div>
+        ) : (
+          developers.map((dev) => (
+            <DeveloperCard
+              key={dev.id}
+              id={dev.id}
+              hourlyRate={dev.hourly_rate}
+              skills={dev.skills || []}
+              available={dev.status === "available"}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 };
-
-export default DeveloperGrid;
