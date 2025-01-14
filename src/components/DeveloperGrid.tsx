@@ -14,10 +14,7 @@ export const DeveloperGrid = () => {
       try {
         const { data, error } = await supabase
           .from("developers")
-          .select(`
-            *,
-            profile:profiles(*)
-          `)
+          .select("*")
           .order("rating", { ascending: false });
 
         if (error) {
