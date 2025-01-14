@@ -47,7 +47,7 @@ DevPay Connect is a decentralized platform that connects developers with custome
 
 5. **Open in Browser:**
    Navigate to `http://localhost:3000`.
-
+ 
 ## 🛠 Usage
 1. **Sign up/Login** using **Supabase Auth**.
 2. **Set Developer Availability & Rates**.
