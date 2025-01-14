@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
-import DeveloperCard from "@/components/DeveloperCard";
+import { DeveloperCard } from "@/components/DeveloperCard";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, SlidersHorizontal } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createClient } from "@supabase/supabase-js";
 
 interface Developer {
   id: string;

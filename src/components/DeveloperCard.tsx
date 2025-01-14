@@ -15,7 +15,7 @@ interface DeveloperCardProps {
   available: boolean;
 }
 
-export default function DeveloperCard({ id, hourlyRate, skills, available }: DeveloperCardProps) {
+export function DeveloperCard({ id, hourlyRate, skills, available }: DeveloperCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
   const [name, setName] = useState('');
@@ -29,13 +29,14 @@ export default function DeveloperCard({ id, hourlyRate, skills, available }: Dev
           .from("profiles")
           .select('full_name, avatar_url')
           .eq('id', id)
-          .single();
+          .single(); // Use .single() to get one record
 
         if (error) {
           console.error("Error fetching data:", error);
           return;
         }
 
+        // Set the fetched data
         setName(data?.full_name || '');
         setImage_Url(data?.avatar_url || '');
       } catch (error) {
@@ -44,7 +45,7 @@ export default function DeveloperCard({ id, hourlyRate, skills, available }: Dev
     };
 
     getDetails();
-  }, [id]);
+  }, [id]); // Run the effect when the `id` prop changes
 
   const handleCallRequest = async () => {
     try {

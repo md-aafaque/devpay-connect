@@ -66,7 +66,6 @@ export type Database = {
       call_requests: {
         Row: {
           amount: number | null
-          amount_status: boolean | null
           client_id: string
           created_at: string | null
           developer_id: string
@@ -80,7 +79,6 @@ export type Database = {
         }
         Insert: {
           amount?: number | null
-          amount_status?: boolean | null
           client_id: string
           created_at?: string | null
           developer_id: string
@@ -94,7 +92,6 @@ export type Database = {
         }
         Update: {
           amount?: number | null
-          amount_status?: boolean | null
           client_id?: string
           created_at?: string | null
           developer_id?: string
@@ -141,7 +138,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
-          hourly_rate: number
+          hourly_rate?: number
           id: string
           rating?: number | null
           skills?: string[] | null
