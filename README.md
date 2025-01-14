@@ -1,7 +1,5 @@
 # DevPay Connect
 
-![DevPay Connect](https://your-project-banner-image-url.com)
-
 [![Demo Video](https://img.shields.io/badge/Demo-Video-blue)](https://youtu.be/zPfiv-anGV0) [![GitHub](https://img.shields.io/github/stars/krishaga/devpay-connect?style=social)](https://github.com/krishaga/devpay-connect)
 
 ## 🚀 Overview
