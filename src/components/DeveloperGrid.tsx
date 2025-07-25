@@ -14,10 +14,7 @@ export const DeveloperGrid = () => {
       try {
         const { data, error } = await supabase
           .from("developers")
-          .select(`
-            *,
-            profile:profiles(*)
-          `)
+          .select("*")
           .order("rating", { ascending: false });
 
         if (error) {
@@ -66,11 +63,9 @@ export const DeveloperGrid = () => {
             <DeveloperCard
               key={dev.id}
               id={dev.id}
-              name={dev.profile.full_name}
               hourlyRate={dev.hourly_rate}
               skills={dev.skills || []}
               available={dev.status === "available"}
-              imageUrl={dev.profile.avatar_url || "https://via.placeholder.com/150"}
             />
           ))
         )}

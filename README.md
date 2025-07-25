@@ -1,69 +1,80 @@
-# Welcome to your Lovable project
+# DevPay Connect
 
-## Project info
+[![Demo Video](https://img.shields.io/badge/Demo-Video-blue)](https://youtu.be/zPfiv-anGV0) [![GitHub](https://img.shields.io/github/stars/krishaga/devpay-connect?style=social)](https://github.com/krishaga/devpay-connect)
 
-**URL**: https://lovable.dev/projects/8283fd3b-8e2f-4f9c-96fe-4946d2dafff9
+## 🚀 Overview
+DevPay Connect is a decentralized platform that connects developers with customers for **instant video calls** and **crypto payments**. It enables developers to set hourly rates, accept payments via **MetaMask**, and ensure secure transactions. Payments are held in escrow until the call ends, after which the client finalizes the payment.
 
-## How can I edit this code?
+## 🌟 Features
+- 🔹 **Instant Developer Booking** - Customers can instantly book available developers.
+- 🔹 **Video Call Integration** - Built-in video calls using **ZegoCloud**.
+- 🔹 **Crypto Payments** - Payments held in escrow until the call ends, then authorized via **MetaMask**.
+- 🔹 **Developer Profiles** - Devs can set availability, rates, and profiles.
+- 🔹 **Real-time Booking System** - Ensures smooth scheduling and availability.
 
-There are several ways of editing your application.
+## 🔧 Tech Stack
+- **Frontend:** Next.js, TypeScript, TailwindCSS
+- **Backend:** Supabase (Database & Auth)
+- **Video Call:** ZegoCloud
+- **Payments:** MetaMask (Crypto Payments)
 
-**Use Lovable**
+## 📌 Installation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8283fd3b-8e2f-4f9c-96fe-4946d2dafff9) and start prompting.
+### Prerequisites
+- **Node.js** (v16+ recommended)
+- **Yarn or npm**
+- **MetaMask Wallet Extension**
 
-Changes made via Lovable will be committed automatically to this repo.
+### Steps
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/krishaga/devpay-connect.git
+   cd devpay-connect
+   ```
 
-**Use your preferred IDE**
+2. **Install Dependencies:**
+   ```bash
+   yarn install  # or npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. **Setup Environment Variables:**
+   Create a `.env.local` file and add necessary API keys (check `.env.example`).
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+4. **Run the Development Server:**
+   ```bash
+   yarn dev  # or npm run dev
+   ```
 
-Follow these steps:
+5. **Open in Browser:**
+   Navigate to `http://localhost:3000`.
+ 
+## 🛠 Usage
+1. **Sign up/Login** using **Supabase Auth**.
+2. **Set Developer Availability & Rates**.
+3. **Customers Browse & Book Devs**.
+4. **Start Video Call** upon booking confirmation.
+5. **Payment Escrow** until call completion.
+6. **Client Authorizes Payment via MetaMask**.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 📜 API & Configuration
+- **Supabase:** Used for user authentication & database management.
+- **ZegoCloud API:** Manages video call functionality.
+- **MetaMask & Web3.js:** Handles crypto transactions securely.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 📌 Contributing
+1. Fork the repo & create a feature branch.
+2. Commit changes & submit a pull request.
+3. Follow the contribution guidelines in `CONTRIBUTING.md` (if applicable).
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📝 License
+This project is licensed under the **MIT License**.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## 📞 Contact & Support
+- **GitHub Issues:** [Report a Bug](https://github.com/krishaga/devpay-connect/issues)
+- **Twitter:** [@yourhandle](https://twitter.com/yourhandle)
+- **Email:** [akkirat@gmail.com](mailto:akkirat@gmail.com) | [krishagarwal1673@gmail.com](mailto:krishagarwal1673@gmail.com)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+🚀 *Built with ❤️ by the DevPay Connect team!*
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8283fd3b-8e2f-4f9c-96fe-4946d2dafff9) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
